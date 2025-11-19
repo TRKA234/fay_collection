@@ -24,7 +24,7 @@
                     <a href="#product-list" class="btn btn-primary">
                         Jelajahi Koleksi
                     </a>
-                    <a href="https://wa.me/62XXXXXXXXXXX" class="btn btn-outline-dark btn-sm">
+                    <a href="https://wa.me/6285172343199" class="btn btn-outline-dark btn-sm">
                         Tanya dulu via WhatsApp
                     </a>
                 </div>

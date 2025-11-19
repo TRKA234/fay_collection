@@ -200,6 +200,43 @@
             color: #9ca3af;
             background-color: #f9fafb;
         }
+
+        .alert-floating {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 260px;
+        }
+
+        .floating-wa {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1050;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: #22c55e;
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3);
+        }
+
+        .floating-wa:hover {
+            background: #16a34a;
+            color: #fff;
+        }
+
+        @media (max-width: 576px) {
+            .floating-wa {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
     </style>
 </head>
 
@@ -230,6 +267,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-1" href="{{ route('login') }}">
+                            <i class="bi bi-shield-lock"></i>
+                            <span>Login Admin</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('cart.index') }}" class="nav-link position-relative">
                             <i class="bi bi-cart3" style="font-size: 1.2rem;"></i>
                             @php
@@ -254,15 +297,32 @@
     </nav>
 
     <main class="container my-4 my-md-5">
+        @if(session('success') || session('error'))
+            <div class="alert alert-floating {{ session('success') ? 'alert-success' : 'alert-danger' }}">
+                {{ session('success') ?? session('error') }}
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
     <footer class="py-3 mt-4 border-top">
         <div class="container d-flex justify-content-between flex-wrap gap-2">
             <span>© {{ date('Y') }} Fay Collection — crochet & knit accessories.</span>
-            <span>Dirajut dengan cinta di Indonesia.</span>
+            <span class="d-flex align-items-center gap-2">
+                Dirajut dengan cinta di Indonesia.
+                <a href="{{ route('login') }}" class="text-decoration-none text-muted small">
+                    Admin Login
+                </a>
+            </span>
         </div>
     </footer>
+
+    <a href="https://wa.me/6285172343199?text=Halo%20Fay%20Collection,%20saya%20ingin%20bertanya%20tentang%20produk."
+        class="floating-wa" target="_blank">
+        <i class="bi bi-whatsapp"></i>
+        Butuh bantuan?
+    </a>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
