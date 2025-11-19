@@ -24,8 +24,7 @@
                     <a href="#product-list" class="btn btn-primary">
                         Jelajahi Koleksi
                     </a>
-                    <a href="https://wa.me/62XXXXXXXXXXX"
-                       class="btn btn-outline-dark btn-sm">
+                    <a href="https://wa.me/62XXXXXXXXXXX" class="btn btn-outline-dark btn-sm">
                         Tanya dulu via WhatsApp
                     </a>
                 </div>
@@ -42,16 +41,34 @@
     </div>
 
     {{-- List produk --}}
-    <div class="d-flex justify-content-between align-items-baseline mb-3" id="product-list">
-        <div>
-            <h2 class="h5 mb-1">Produk Terbaru</h2>
-            <p class="text-muted mb-0" style="font-size: 0.9rem;">
-                Pilih produk rajut favoritmu. Cocok untuk hadiah atau koleksi pribadi.
-            </p>
+    <div class="mb-3" id="product-list">
+        <div class="d-flex justify-content-between align-items-baseline mb-3">
+            <div>
+                <h2 class="h5 mb-1">Produk Terbaru</h2>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">
+                    Pilih produk rajut favoritmu. Cocok untuk hadiah atau koleksi pribadi.
+                </p>
+            </div>
+            <span class="text-muted" style="font-size: 0.85rem;">
+                {{ $products->count() }} produk
+            </span>
         </div>
-        <span class="text-muted" style="font-size: 0.85rem;">
-            {{ $products->count() }} produk
-        </span>
+
+        {{-- Filter Kategori --}}
+        @if($categories->isNotEmpty())
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <a href="{{ route('home') }}"
+                    class="btn btn-sm {{ !$selectedCategory ? 'btn-primary' : 'btn-outline-secondary' }}">
+                    Semua Kategori
+                </a>
+                @foreach($categories as $category)
+                    <a href="{{ route('home', ['category' => $category->slug]) }}"
+                        class="btn btn-sm {{ $selectedCategory && $selectedCategory->id == $category->id ? 'btn-primary' : 'btn-outline-secondary' }}">
+                        {{ $category->name }}
+                    </a>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     @if($products->isEmpty())
@@ -64,20 +81,13 @@
                         <div class="card product-card h-100">
                             <div class="p-2">
                                 {{-- Gambar produk di kartu --}}
-                                <div class="product-image-placeholder"
-                                     style="height: 220px; border-radius: 22px; overflow:hidden;">
+                                <div class="product-image-placeholder" style="height: 220px; border-radius: 22px; overflow:hidden;">
                                     @if($product->main_image)
-                                        {{-- debug: tampilkan URL yang dipakai --}}
-                                        <small class="text-muted d-block mb-1">{{ \Illuminate\Support\Facades\Storage::url($product->main_image) }}</small>
-
-                                        <img
-                                            src="{{ \Illuminate\Support\Facades\Storage::url($product->main_image) }}"
-                                            alt="{{ $product->name }}"
-                                            style="width: 100%; height: 100%; object-fit: cover; display:block;"
-                                        >
+                                        <img src="{{ asset('storage/' . $product->main_image) }}" alt="{{ $product->name }}"
+                                            style="width: 100%; height: 100%; object-fit: cover; display:block;">
                                     @else
                                         <div class="d-flex align-items-center justify-content-center w-100 h-100"
-                                             style="border-radius: 22px; background: linear-gradient(135deg,#eef2ff,#fae8ff); color:#9ca3af;">
+                                            style="border-radius: 22px; background: linear-gradient(135deg,#eef2ff,#fae8ff); color:#9ca3af;">
                                             Belum ada gambar
                                         </div>
                                     @endif
@@ -102,6 +112,21 @@
                                 <small class="text-muted">
                                     Stok: {{ $product->stock }}
                                 </small>
+
+                                @if($product->stock > 0)
+                                    <form action="{{ route('cart.add', $product) }}" method="POST" class="mt-2"
+                                        onclick="event.stopPropagation();">
+                                        @csrf
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-sm btn-primary w-100">
+                                            <i class="bi bi-cart-plus"></i> Tambah ke Keranjang
+                                        </button>
+                                    </form>
+                                @else
+                                    <div class="mt-2">
+                                        <small class="text-danger">Stok habis</small>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </a>

@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('products')) {
             Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description')->nullable();
-            $table->unsignedBigInteger('price'); // harga dalam rupiah
-            $table->unsignedInteger('stock')->default(0);
-            $table->string('main_image')->nullable(); // path gambar
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
-        });
+                $table->id();
+                $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+                $table->string('name');
+                $table->string('slug')->unique();
+                $table->text('description')->nullable();
+                $table->unsignedBigInteger('price'); // harga dalam rupiah
+                $table->unsignedInteger('stock')->default(0);
+                $table->string('main_image')->nullable(); // path gambar
+                $table->boolean('is_active')->default(true);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

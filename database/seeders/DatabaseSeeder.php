@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        // $this->call(FayCollectionSeeder::class);
+        $this->call(FayCollectionSeeder::class);
         $this->call(AdminUserSeeder::class);
     }
 }

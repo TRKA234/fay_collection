@@ -1,27 +1,34 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Fay Collection - @yield('title')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {{-- Google Font: Poppins (banyak dipakai di web modern) --}}
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     {{-- Bootstrap --}}
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    {{-- Bootstrap Icons --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
         :root {
             /* Warna tema utama, bisa Bro ganti kalau mau */
-            --primary-color: #6366f1;   /* indigo/ungu kebiruan */
-            --primary-soft: #eef2ff;    /* ungu muda lembut */
-            --accent-color: #f97316;    /* oranye untuk highlight kecil */
-            --bg-body: #f5f5f7;         /* abu muda netral */
-            --text-main: #111827;       /* hampir hitam */
+            --primary-color: #6366f1;
+            /* indigo/ungu kebiruan */
+            --primary-soft: #eef2ff;
+            /* ungu muda lembut */
+            --accent-color: #f97316;
+            /* oranye untuk highlight kecil */
+            --bg-body: #f5f5f7;
+            /* abu muda netral */
+            --text-main: #111827;
+            /* hampir hitam */
             --text-muted: #6b7280;
             --card-radius: 18px;
         }
@@ -195,53 +202,69 @@
         }
     </style>
 </head>
+
 <body>
 
-<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
-    <div class="container">
-        <div class="d-flex align-items-center gap-2">
-            <span class="brand-badge">Handmade</span>
-            <a class="navbar-brand" href="{{ route('home') }}">
-                Fay Collection
-            </a>
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+        <div class="container">
+            <div class="d-flex align-items-center gap-2">
+                <span class="brand-badge">Handmade</span>
+                <a class="navbar-brand" href="{{ route('home') }}">
+                    Fay Collection
+                </a>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ route('home') }}">Beranda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-dark btn-sm ms-lg-2" href="#product-list">
+                            Lihat Produk
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('cart.index') }}" class="nav-link position-relative">
+                            <i class="bi bi-cart3" style="font-size: 1.2rem;"></i>
+                            @php
+                                $cart = session()->get('cart', []);
+                                $cartCount = 0;
+                                foreach ($cart as $item) {
+                                    $cartCount += $item['quantity'];
+                                }
+                            @endphp
+                            @if($cartCount > 0)
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    style="font-size: 0.65rem;">
+                                    {{ $cartCount }}
+                                </span>
+                            @endif
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
 
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <main class="container my-4 my-md-5">
+        @yield('content')
+    </main>
 
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
-                <li class="nav-item">
-                    <a class="nav-link active" href="{{ route('home') }}">Beranda</a>
-                </li>
-                {{-- Nanti bisa tambah menu lain --}}
-                <li class="nav-item">
-                    <a class="btn btn-outline-dark btn-sm ms-lg-2" href="#product-list">
-                        Lihat Produk
-                    </a>
-                </li>
-            </ul>
+    <footer class="py-3 mt-4 border-top">
+        <div class="container d-flex justify-content-between flex-wrap gap-2">
+            <span>© {{ date('Y') }} Fay Collection — crochet & knit accessories.</span>
+            <span>Dirajut dengan cinta di Indonesia.</span>
         </div>
-    </div>
-</nav>
+    </footer>
 
-<main class="container my-4 my-md-5">
-    @yield('content')
-</main>
-
-<footer class="py-3 mt-4 border-top">
-    <div class="container d-flex justify-content-between flex-wrap gap-2">
-        <span>© {{ date('Y') }} Fay Collection — crochet & knit accessories.</span>
-        <span>Dirajut dengan cinta di Indonesia.</span>
-    </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

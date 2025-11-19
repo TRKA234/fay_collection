@@ -15,9 +15,11 @@
         </div>
     @endif
 
-    <div class="card-soft">
-        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
-            @include('admin.products._form', ['product' => null])
-        </form>
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+                @include('admin.products._form', ['product' => null])
+            </form>
+        </div>
     </div>
 @endsection
