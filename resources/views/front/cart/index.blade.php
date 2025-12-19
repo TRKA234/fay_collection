@@ -141,14 +141,35 @@
                             $waNumber = "6285172343199";
                         @endphp
 
-                        <a href="https://wa.me/{{ $waNumber }}?text={{ $waMessage }}" target="_blank"
-                            class="btn btn-primary w-100 mb-2">
-                            <i class="bi bi-whatsapp"></i> Checkout via WhatsApp
-                        </a>
+                        {{-- Checkout Internal (simpan order) --}}
+@auth
+    @if(auth()->user()->role === 'customer')
+        <a href="{{ route('checkout.show') }}" class="btn btn-primary w-100 mb-2">
+            <i class="bi bi-bag-check"></i> Checkout Sekarang
+        </a>
+    @elseif(auth()->user()->role === 'admin')
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-primary w-100 mb-2">
+            <i class="bi bi-speedometer2"></i> Kembali ke Dashboard
+        </a>
+    @endif
+@else
+    <a href="{{ route('login') }}" class="btn btn-primary w-100 mb-2">
+        <i class="bi bi-person"></i> Login untuk Checkout
+    </a>
+@endauth
 
-                        <a href="{{ route('home') }}" class="btn btn-outline-secondary w-100">
-                            Lanjutkan Belanja
-                        </a>
+{{-- Checkout via WhatsApp (tetap ada) --}}
+<a href="https://wa.me/{{ $waNumber }}?text={{ $waMessage }}" target="_blank"
+   class="btn btn-outline-success w-100 mb-2">
+    <i class="bi bi-whatsapp"></i> Checkout via WhatsApp
+</a>
+
+<a href="{{ route('home') }}" class="btn btn-outline-secondary w-100">
+    Lanjutkan Belanja
+</a>
+
+
+                        
                     </div>
                 </div>
             </div>

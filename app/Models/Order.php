@@ -10,16 +10,24 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'customer_name',
-        'customer_contact',
-        'total_amount',
-        'status',
-        'notes',
+        'user_id',
+    'customer_name',
+    'customer_contact',
+    'shipping_address',
+    'total_amount',
+    'status',
+    'notes',
     ];
 
     protected $casts = [
         'total_amount' => 'integer',
     ];
+
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
 
     /**
      * Get the products for the order.

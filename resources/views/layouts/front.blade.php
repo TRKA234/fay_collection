@@ -266,29 +266,53 @@
                             Lihat Produk
                         </a>
                     </li>
-                    {{-- AUTH CUSTOMER --}}
+                    {{-- AUTH USER --}}
 @auth
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1"
-           href="#"
-           role="button"
-           data-bs-toggle="dropdown"
-           aria-expanded="false">
-            <i class="bi bi-person-circle"></i>
-            <span>{{ auth()->user()->name }}</span>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="dropdown-item text-danger">
-                        <i class="bi bi-box-arrow-right me-1"></i> Logout
-                    </button>
-                </form>
-            </li>
-        </ul>
-    </li>
+    @if(auth()->user()->role === 'admin')
+        {{-- ADMIN --}}
+        <li class="nav-item">
+            <a href="{{ route('admin.dashboard') }}"
+               class="btn btn-outline-primary btn-sm ms-lg-2">
+                <i class="bi bi-speedometer2 me-1"></i>
+                Dashboard Admin
+            </a>
+        </li>
+
+        <li class="nav-item ms-lg-1">
+            <form method="POST" action="{{ route('admin.logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-box-arrow-right me-1"></i>
+                    Logout
+                </button>
+            </form>
+        </li>
+    @else
+        {{-- CUSTOMER --}}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-1"
+               href="#"
+               role="button"
+               data-bs-toggle="dropdown"
+               aria-expanded="false">
+                <i class="bi bi-person-circle"></i>
+                <span>{{ auth()->user()->name }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="bi bi-box-arrow-right me-1"></i>
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    @endif
 @else
+    {{-- GUEST --}}
     <li class="nav-item">
         <a class="nav-link d-flex align-items-center gap-1" href="{{ route('login') }}">
             <i class="bi bi-person"></i>
@@ -301,6 +325,7 @@
         </a>
     </li>
 @endauth
+
 
                     <li class="nav-item">
                         <a href="{{ route('cart.index') }}" class="nav-link position-relative">

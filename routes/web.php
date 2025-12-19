@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\CategoryAdminController;
 use App\Http\Controllers\Admin\ProductAdminController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderAdminController;
+use App\Http\Controllers\Front\CheckoutController;
 
 // =====================
 // CUSTOMER AUTH
@@ -26,10 +27,17 @@ Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
 // =====================
 // ADMIN AUTH
 // =====================
-Route::prefix('admin')->name('admin.')->middleware('guest')->group(function () {
-    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
+        Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+    });
+
+    Route::post('/logout', [AdminAuthController::class, 'logout'])
+        ->middleware('auth')
+        ->name('logout');
 });
+
 
 // =====================
 // ADMIN AREA (ADMIN ONLY)
@@ -62,9 +70,16 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::delete('/remove/{product}', [CartController::class, 'remove'])->name('remove');
     Route::post('/clear', [CartController::class, 'clear'])->name('clear');
     Route::get('/count', [CartController::class, 'count'])->name('count');
-
-    // contoh checkout (WAJIB CUSTOMER)
-    // Route::post('/checkout', [CartController::class, 'checkout'])
-    //     ->middleware(['auth', 'role:customer'])
-    //     ->name('checkout');
 });
+
+// =====================
+// CHECKOUT + MY ORDERS (CUSTOMER ONLY)
+// =====================
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+
+    Route::get('/my-orders', [CheckoutController::class, 'myOrders'])->name('orders.mine');
+    Route::get('/my-orders/{order}', [CheckoutController::class, 'myOrderShow'])->name('orders.mine.show');
+});
+

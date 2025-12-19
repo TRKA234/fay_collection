@@ -29,7 +29,8 @@
 <header class="topbar d-flex justify-content-between align-items-center">
     <div class="fw-semibold">Admin Area</div>
 
-    <form action="{{ route('logout') }}" method="POST" class="m-0">
+    <form action="{{ route('admin.logout') }}" method="POST" class="m-0">
+
         @csrf
         <button class="btn btn-outline-dark btn-sm">Logout</button>
     </form>
