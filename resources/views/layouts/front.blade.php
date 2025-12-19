@@ -266,12 +266,42 @@
                             Lihat Produk
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-1" href="{{ route('login') }}">
-                            <i class="bi bi-shield-lock"></i>
-                            <span>Login Admin</span>
-                        </a>
-                    </li>
+                    {{-- AUTH CUSTOMER --}}
+@auth
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1"
+           href="#"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            <i class="bi bi-person-circle"></i>
+            <span>{{ auth()->user()->name }}</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="dropdown-item text-danger">
+                        <i class="bi bi-box-arrow-right me-1"></i> Logout
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </li>
+@else
+    <li class="nav-item">
+        <a class="nav-link d-flex align-items-center gap-1" href="{{ route('login') }}">
+            <i class="bi bi-person"></i>
+            <span>Login</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="btn btn-outline-dark btn-sm ms-lg-2" href="{{ route('register') }}">
+            Daftar
+        </a>
+    </li>
+@endauth
+
                     <li class="nav-item">
                         <a href="{{ route('cart.index') }}" class="nav-link position-relative">
                             <i class="bi bi-cart3" style="font-size: 1.2rem;"></i>
@@ -311,9 +341,10 @@
             <span>© {{ date('Y') }} Fay Collection — crochet & knit accessories.</span>
             <span class="d-flex align-items-center gap-2">
                 Dirajut dengan cinta di Indonesia.
-                <a href="{{ route('login') }}" class="text-decoration-none text-muted small">
+                <a href="{{ route('admin.login') }}" class="text-decoration-none text-muted small">
                     Admin Login
                 </a>
+
             </span>
         </div>
     </footer>
