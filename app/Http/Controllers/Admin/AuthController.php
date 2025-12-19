@@ -17,23 +17,20 @@ class AuthController extends Controller
     // Proses login
     public function login(Request $request)
     {
-        // Validasi input
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        // Coba login
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            // Regenerasi session untuk keamanan
-            $request->session()->regenerate();
+        $credentials['role'] = 'admin';
 
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        // Kalau gagal
         return back()->withErrors([
-            'email' => 'Email atau password tidak sesuai.',
+            'email' => 'Email atau password admin tidak sesuai.',
         ])->onlyInput('email');
     }
 
@@ -45,6 +42,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('admin.login');
     }
 }
