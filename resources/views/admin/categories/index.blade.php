@@ -18,14 +18,14 @@
 
     {{-- Notif --}}
     @if(session('success'))
-        <div class="alert alert-success py-2">
-            {{ session('success') }}
+        <div class="alert alert-success py-2 mb-3">
+            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
         </div>
     @endif
 
     @if(session('error'))
-        <div class="alert alert-danger py-2">
-            {{ session('error') }}
+        <div class="alert alert-warning py-2 mb-3">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
         </div>
     @endif
 

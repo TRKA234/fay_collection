@@ -14,14 +14,14 @@ class OrderAdminController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('products')
+        $orders = Order::with('products', 'user')
             ->latest()
             ->paginate(10);
 
         // Filter by status if provided
         if (request('status')) {
             $orders = Order::where('status', request('status'))
-                ->with('products')
+                ->with('products', 'user')
                 ->latest()
                 ->paginate(10);
         }
@@ -94,7 +94,7 @@ class OrderAdminController extends Controller
      */
     public function show(Order $order)
     {
-        $order->load('products');
+        $order->load('products', 'user');
 
         return view('admin.orders.show', compact('order'));
     }
@@ -104,7 +104,7 @@ class OrderAdminController extends Controller
      */
     public function edit(Order $order)
     {
-        $order->load('products');
+        $order->load('products', 'user');
         $products = Product::where('is_active', true)
             ->orderBy('name')
             ->get();

@@ -32,10 +32,42 @@
 
             {{-- Hero preview di kanan --}}
             <div class="col-lg-5">
-                <div class="product-image-placeholder d-flex align-items-center justify-content-center text-muted">
-                    {{-- Nanti bisa diganti foto beneran --}}
-                    Preview koleksi Fay Collection
-                </div>
+                @if(isset($featuredProduct) && $featuredProduct)
+                    <a href="{{ route('product.show', $featuredProduct->slug) }}" class="text-decoration-none">
+                        <div class="position-relative" style="border-radius: 24px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.15);">
+                            @if($featuredProduct->main_image)
+                                <img src="{{ asset('storage/' . $featuredProduct->main_image) }}" 
+                                     alt="{{ $featuredProduct->name }}"
+                                     style="width: 100%; height: 100%; object-fit: cover; display: block; min-height: 300px;">
+                            @else
+                                <div class="product-image-placeholder d-flex align-items-center justify-content-center text-muted" 
+                                     style="min-height: 300px;">
+                                    <div class="text-center">
+                                        <i class="bi bi-image" style="font-size: 3rem; opacity: 0.3;"></i>
+                                        <p class="mt-2 mb-0">Belum ada gambar</p>
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3" 
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <div class="text-white">
+                                    <div class="small mb-1">Produk Terbaru</div>
+                                    <div class="fw-bold">{{ $featuredProduct->name }}</div>
+                                    <div class="small mt-1">Rp {{ number_format($featuredProduct->price, 0, ',', '.') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                @else
+                    {{-- Fallback jika tidak ada produk dengan gambar --}}
+                    <div class="product-image-placeholder d-flex align-items-center justify-content-center text-muted" 
+                         style="min-height: 300px; border-radius: 24px;">
+                        <div class="text-center">
+                            <i class="bi bi-bag-heart" style="font-size: 4rem; opacity: 0.2;"></i>
+                            <p class="mt-3 mb-0 small">Koleksi Handmade</p>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

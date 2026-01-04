@@ -10,6 +10,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'customer_name',
         'customer_contact',
         'total_amount',
@@ -20,6 +21,14 @@ class Order extends Model
     protected $casts = [
         'total_amount' => 'integer',
     ];
+
+    /**
+     * Get the user that owns the order.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * Get the products for the order.

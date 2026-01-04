@@ -9,7 +9,9 @@
             <div class="card-body p-4">
                 <div class="text-center mb-4">
                     <h3 class="h4 mb-1">Login</h3>
-                    <p class="text-muted small mb-0">Masuk ke akun Anda</p>
+                    <p class="text-muted small mb-0">
+                        Masuk sebagai Customer atau Admin
+                    </p>
                 </div>
 
                 @if ($errors->any())
@@ -59,10 +61,22 @@
                         <i class="bi bi-box-arrow-in-right me-2"></i>Login
                     </button>
 
-                    <div class="text-center">
+                    <div class="text-center mb-2">
                         <small class="text-muted">
                             Belum punya akun?
                             <a href="{{ route('register') }}" class="text-decoration-none">Daftar sekarang</a>
+                        </small>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <div class="text-center">
+                        <small class="text-muted d-block mb-1">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Sistem akan otomatis mengarahkan Anda ke halaman yang sesuai berdasarkan role akun.
+                        </small>
+                        <small class="text-muted">
+                            Admin? Login dengan email admin untuk akses panel.
                         </small>
                     </div>
                 </form>
@@ -71,3 +85,4 @@
     </div>
 </div>
 @endsection
+

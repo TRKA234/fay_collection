@@ -70,9 +70,9 @@
                 </div>
             @endif
 
-            <div class="mt-2">
-                <a href="https://wa.me/62XXXXXXXXXX?text=Halo%20Fay%2C%20saya%20tertarik%20dengan%20{{ urlencode($product->name) }}"
-                    class="btn btn-outline-success btn-sm">
+            <div class="mt-3">
+                <a href="https://wa.me/6285172343199?text=Halo%20Fay%20Collection%2C%20saya%20tertarik%20dengan%20{{ urlencode($product->name) }}"
+                    class="btn btn-outline-success btn-sm" target="_blank">
                     <i class="bi bi-whatsapp"></i> Tanya via WhatsApp
                 </a>
             </div>

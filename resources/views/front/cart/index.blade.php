@@ -16,17 +16,6 @@
         @endif
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success py-2 mb-3">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger py-2 mb-3">
-            {{ session('error') }}
-        </div>
-    @endif
 
     @if(count($cartItems) == 0)
         <div class="card text-center py-5">
@@ -128,6 +117,39 @@
                             <strong class="price-text fs-5">Rp {{ number_format($total, 0, ',', '.') }}</strong>
                         </div>
 
+                        <hr>
+
+                        {{-- Checkout Sistem (Jika Login) --}}
+                        @auth
+                            @if(auth()->user()->role === 'customer')
+                                <form action="{{ route('cart.checkout') }}" method="POST" id="checkoutForm">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label class="form-label">Nomor WhatsApp <span class="text-danger">*</span></label>
+                                        <input type="text" name="customer_contact" class="form-control form-control-sm"
+                                            value="{{ old('customer_contact', auth()->user()->whatsapp ?? '') }}"
+                                            placeholder="081234567890 atau +6281234567890" required>
+                                        <small class="text-muted">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Nomor WhatsApp untuk konfirmasi pesanan
+                                        </small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Catatan (Opsional)</label>
+                                        <textarea name="notes" class="form-control form-control-sm" rows="2"
+                                            placeholder="Catatan khusus untuk pesanan...">{{ old('notes') }}</textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100 mb-2">
+                                        <i class="bi bi-cart-check"></i> Checkout Sekarang
+                                    </button>
+                                </form>
+                            @endif
+                        @else
+                            <div class="alert alert-info py-2 mb-2" style="font-size: 0.85rem;">
+                                <i class="bi bi-info-circle"></i> Login untuk checkout otomatis
+                            </div>
+                        @endauth
+
                         {{-- Generate WhatsApp Message --}}
                         @php
                             $waMessage = "Halo Fay Collection!%0A%0A";
@@ -142,9 +164,17 @@
                         @endphp
 
                         <a href="https://wa.me/{{ $waNumber }}?text={{ $waMessage }}" target="_blank"
-                            class="btn btn-primary w-100 mb-2">
+                            class="btn btn-success w-100 mb-2">
                             <i class="bi bi-whatsapp"></i> Checkout via WhatsApp
                         </a>
+
+                        @auth
+                            @if(auth()->user()->role === 'customer')
+                                <a href="{{ route('orders.index') }}" class="btn btn-outline-primary w-100 mb-2">
+                                    <i class="bi bi-box-seam"></i> Lihat Pesanan Saya
+                                </a>
+                            @endif
+                        @endauth
 
                         <a href="{{ route('home') }}" class="btn btn-outline-secondary w-100">
                             Lanjutkan Belanja

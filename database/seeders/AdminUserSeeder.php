@@ -14,12 +14,29 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-         User::updateOrCreate(
-            ['email' => 'admin@faycollection.test'], // cek by email
+        // Admin utama
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@faycollection.test'],
             [
                 'name' => 'Fay Admin',
-                'password' => Hash::make('password123'), // password bisa diganti nanti
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
             ]
         );
+
+        $this->command->info('✓ Admin user created/updated:');
+        $this->command->info('  Email: admin@faycollection.test');
+        $this->command->info('  Password: admin123');
+        $this->command->warn('  ⚠️  PENTING: Ganti password setelah login pertama kali!');
+
+        // Optional: Admin kedua (jika diperlukan)
+        // $admin2 = User::updateOrCreate(
+        //     ['email' => 'admin2@faycollection.test'],
+        //     [
+        //         'name' => 'Admin 2',
+        //         'password' => Hash::make('admin123'),
+        //         'role' => 'admin',
+        //     ]
+        // );
     }
 }

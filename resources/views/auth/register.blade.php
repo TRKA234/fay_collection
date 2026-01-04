@@ -52,6 +52,22 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label">Nomor WhatsApp <span class="text-danger">*</span></label>
+                        <input
+                            type="text"
+                            name="whatsapp"
+                            class="form-control"
+                            value="{{ old('whatsapp') }}"
+                            required
+                            placeholder="081234567890 atau +6281234567890"
+                        >
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Nomor WhatsApp untuk konfirmasi pesanan dan komunikasi
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label">Password</label>
                         <input
                             type="password"

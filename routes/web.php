@@ -3,33 +3,25 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Front\ProductController;
 use App\Http\Controllers\Front\CartController;
-use App\Http\Controllers\Admin\AuthController as AdminAuthController;
-use App\Http\Controllers\Front\AuthController as FrontAuthController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\CategoryAdminController;
 use App\Http\Controllers\Admin\ProductAdminController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderAdminController;
+use App\Http\Controllers\Front\OrderController;
 
 // =====================
-// CUSTOMER AUTH
+// UNIFIED AUTH (Customer & Admin)
 // =====================
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [FrontAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [FrontAuthController::class, 'login'])->name('login.post');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-    Route::get('/register', [FrontAuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [FrontAuthController::class, 'register'])->name('register.post');
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 });
 
-Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
-
-// =====================
-// ADMIN AUTH
-// =====================
-Route::prefix('admin')->name('admin.')->middleware('guest')->group(function () {
-    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
-});
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // =====================
 // ADMIN AREA (ADMIN ONLY)
@@ -62,9 +54,15 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::delete('/remove/{product}', [CartController::class, 'remove'])->name('remove');
     Route::post('/clear', [CartController::class, 'clear'])->name('clear');
     Route::get('/count', [CartController::class, 'count'])->name('count');
+    Route::post('/checkout', [CartController::class, 'checkout'])
+        ->middleware(['auth', 'role:customer'])
+        ->name('checkout');
+});
 
-    // contoh checkout (WAJIB CUSTOMER)
-    // Route::post('/checkout', [CartController::class, 'checkout'])
-    //     ->middleware(['auth', 'role:customer'])
-    //     ->name('checkout');
+// =====================
+// CUSTOMER ORDERS (AUTH REQUIRED)
+// =====================
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 });

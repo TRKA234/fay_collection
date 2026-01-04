@@ -14,41 +14,49 @@ class FayCollectionSeeder extends Seeder
      */
     public function run(): void
     {
-        $bags = Category::create([
-            'name' => 'Tas Rajut',
-            'slug' => 'tas-rajut',
-        ]);
+        // Buat kategori menggunakan firstOrCreate untuk menghindari duplicate
+        $bags = Category::firstOrCreate(
+            ['slug' => 'tas-rajut'],
+            ['name' => 'Tas Rajut']
+        );
 
-        $shoes = Category::create([
-            'name' => 'Sepatu Rajut',
-            'slug' => 'sepatu-rajut',
-        ]);
+        $shoes = Category::firstOrCreate(
+            ['slug' => 'sepatu-rajut'],
+            ['name' => 'Sepatu Rajut']
+        );
 
-        $keychain = Category::create([
-            'name' => 'Gantungan Kunci',
-            'slug' => 'gantungan-kunci',
-        ]);
+        $keychain = Category::firstOrCreate(
+            ['slug' => 'gantungan-kunci'],
+            ['name' => 'Gantungan Kunci']
+        );
 
-        Product::create([
-            'category_id' => $bags->id,
-            'name'        => 'Tas Rajut Fay Classic',
-            'slug'        => 'tas-rajut-fay-classic',
-            'description' => 'Tas rajut handmade dengan motif klasik, cocok untuk sehari-hari.',
-            'price'       => 250000,
-            'stock'       => 5,
-            'main_image'  => 'images/products/tas-fay-classic.jpg',
-            'is_active'   => true,
-        ]);
+        // Buat produk menggunakan updateOrCreate untuk menghindari duplicate
+        Product::updateOrCreate(
+            ['slug' => 'tas-rajut-fay-classic'],
+            [
+                'category_id' => $bags->id,
+                'name'        => 'Tas Rajut Fay Classic',
+                'description' => 'Tas rajut handmade dengan motif klasik, cocok untuk sehari-hari.',
+                'price'       => 250000,
+                'stock'       => 5,
+                'main_image'  => 'images/products/tas-fay-classic.jpg',
+                'is_active'   => true,
+            ]
+        );
 
-        Product::create([
-            'category_id' => $keychain->id,
-            'name'        => 'Gantungan Kunci Bunga Rajut',
-            'slug'        => 'gantungan-kunci-bunga-rajut',
-            'description' => 'Gantungan kunci lucu berbentuk bunga, dibuat full handmade.',
-            'price'       => 35000,
-            'stock'       => 20,
-            'main_image'  => 'images/products/ganci-bunga.jpg',
-            'is_active'   => true,
-        ]);
+        Product::updateOrCreate(
+            ['slug' => 'gantungan-kunci-bunga-rajut'],
+            [
+                'category_id' => $keychain->id,
+                'name'        => 'Gantungan Kunci Bunga Rajut',
+                'description' => 'Gantungan kunci lucu berbentuk bunga, dibuat full handmade.',
+                'price'       => 35000,
+                'stock'       => 20,
+                'main_image'  => 'images/products/ganci-bunga.jpg',
+                'is_active'   => true,
+            ]
+        );
+
+        $this->command->info('✓ Categories and products seeded successfully!');
     }
 }

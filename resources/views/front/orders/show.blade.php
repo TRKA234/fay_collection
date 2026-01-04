@@ -1,37 +1,26 @@
-@extends('layouts.admin')
+@extends('layouts.front')
 
-@section('title', 'Detail Pesanan')
+@section('title', 'Detail Pesanan #' . $order->id)
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <a href="{{ route('admin.orders.index') }}" class="text-decoration-none" style="font-size: 0.9rem;">
+            <a href="{{ route('orders.index') }}" class="text-decoration-none" style="font-size: 0.9rem;">
                 &larr; Kembali ke daftar pesanan
             </a>
             <h1 class="h4 mt-2 mb-1">Detail Pesanan #{{ $order->id }}</h1>
         </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('admin.orders.edit', $order) }}" class="btn btn-primary">
-                <i class="bi bi-pencil me-1"></i>Edit Pesanan
-            </a>
-        </div>
     </div>
-
-    @if(session('success'))
-        <div class="alert alert-success py-2 mb-3">
-            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
-        </div>
-    @endif
 
     <div class="row g-3">
         {{-- Informasi Pesanan --}}
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="mb-3">Informasi Pembeli</h5>
+                    <h5 class="mb-3">Informasi Pesanan</h5>
 
                     <div class="mb-3">
-                        <label class="text-muted" style="font-size: 0.85rem;">Nama Pembeli</label>
+                        <label class="text-muted" style="font-size: 0.85rem;">Nama</label>
                         <div style="font-size: 1rem; font-weight: 500;">{{ $order->customer_name }}</div>
                     </div>
 
@@ -43,12 +32,6 @@
                                 <i class="bi bi-whatsapp"></i> {{ $order->customer_contact }}
                             </a>
                         </div>
-                        @if($order->user && $order->user->whatsapp)
-                            <small class="text-muted d-block mt-1">
-                                <i class="bi bi-person me-1"></i>
-                                WhatsApp terdaftar: {{ $order->user->whatsapp }}
-                            </small>
-                        @endif
                     </div>
 
                     @if($order->notes)
@@ -96,7 +79,7 @@
                             <tfoot>
                                 <tr>
                                     <th colspan="3" class="text-end">Total Pesanan:</th>
-                                    <th class="text-end text-primary" style="font-size: 1.1rem;">
+                                    <th class="text-end price-text" style="font-size: 1.1rem;">
                                         Rp {{ number_format($order->total_amount, 0, ',', '.') }}
                                     </th>
                                 </tr>
@@ -138,23 +121,16 @@
 
             <div class="card mt-3">
                 <div class="card-body">
-                    <h5 class="mb-3">Aksi</h5>
-
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('admin.orders.edit', $order) }}" class="btn btn-primary">
-                            Edit Pesanan
-                        </a>
-                        <form action="{{ route('admin.orders.destroy', $order) }}" method="POST"
-                            onsubmit="return confirm('Yakin hapus pesanan ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-outline-danger w-100">
-                                Hapus Pesanan
-                            </button>
-                        </form>
-                    </div>
+                    <h5 class="mb-3">Butuh Bantuan?</h5>
+                    <p class="text-muted" style="font-size: 0.9rem;">
+                        Jika ada pertanyaan tentang pesanan Anda, silakan hubungi admin melalui WhatsApp.
+                    </p>
+                    <a href="https://wa.me/6285172343199" target="_blank" class="btn btn-success w-100">
+                        <i class="bi bi-whatsapp"></i> Hubungi Admin
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+

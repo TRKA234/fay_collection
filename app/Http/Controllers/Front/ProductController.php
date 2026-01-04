@@ -23,7 +23,13 @@ class ProductController extends Controller
         $categories = Category::has('products')->orderBy('name')->get();
         $selectedCategory = request('category') ? Category::where('slug', request('category'))->first() : null;
 
-        return view('front.products.index', compact('products', 'categories', 'selectedCategory'));
+        // Ambil produk terbaru untuk hero preview (yang punya gambar)
+        $featuredProduct = Product::where('is_active', true)
+            ->whereNotNull('main_image')
+            ->latest()
+            ->first();
+
+        return view('front.products.index', compact('products', 'categories', 'selectedCategory', 'featuredProduct'));
     }
 
     public function show(string $slug)
