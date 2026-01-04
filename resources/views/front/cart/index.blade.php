@@ -112,9 +112,19 @@
 
                         <hr>
 
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <strong>Rp {{ number_format($total, 0, ',', '.') }}</strong>
+                        </div>
+
                         <div class="d-flex justify-content-between mb-3">
-                            <strong>Total:</strong>
-                            <strong class="price-text fs-5">Rp {{ number_format($total, 0, ',', '.') }}</strong>
+                            <div>
+                                <strong>Total:</strong>
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                    *Ongkos kirim akan ditambahkan setelah konfirmasi admin
+                                </small>
+                            </div>
+                            <strong class="price-text fs-5" id="totalWithShipping">Rp {{ number_format($total, 0, ',', '.') }}</strong>
                         </div>
 
                         <hr>
@@ -134,11 +144,43 @@
                                             Nomor WhatsApp untuk konfirmasi pesanan
                                         </small>
                                     </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Metode Pengiriman <span class="text-danger">*</span></label>
+                                        <select name="shipping_method" id="shippingMethod" class="form-select form-select-sm" required>
+                                            <option value="jnt" {{ old('shipping_method') == 'jnt' ? 'selected' : '' }}>JNT Express (Pengiriman)</option>
+                                            <option value="pickup" {{ old('shipping_method') == 'pickup' ? 'selected' : '' }}>Ambil di Lokasi Produksi</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3" id="shippingAddressGroup">
+                                        <label class="form-label">Alamat Pengiriman Lengkap <span class="text-danger">*</span></label>
+                                        <textarea name="shipping_address" class="form-control form-control-sm" rows="3"
+                                            placeholder="Nama Penerima, Jalan, RT/RW, Kelurahan, Kecamatan, Kota, Kode Pos" required>{{ old('shipping_address') }}</textarea>
+                                        <small class="text-muted">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Alamat lengkap untuk pengiriman via JNT
+                                        </small>
+                                    </div>
+
+                                    <div class="mb-3" id="shippingCostInfo" style="display: none;">
+                                        <div class="alert alert-info py-2" style="font-size: 0.85rem;">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            <strong>Ongkos Kirim:</strong> Akan dikonfirmasi admin setelah pesanan dibuat. Admin akan menghubungi Anda via WhatsApp untuk konfirmasi ongkos kirim berdasarkan alamat tujuan.
+                                        </div>
+                                    </div>
+
                                     <div class="mb-3">
                                         <label class="form-label">Catatan (Opsional)</label>
                                         <textarea name="notes" class="form-control form-control-sm" rows="2"
                                             placeholder="Catatan khusus untuk pesanan...">{{ old('notes') }}</textarea>
                                     </div>
+
+                                    <div class="alert alert-info py-2 mb-3" style="font-size: 0.85rem;">
+                                        <strong><i class="bi bi-info-circle me-1"></i>Informasi Pembayaran:</strong><br>
+                                        Pembayaran dilakukan di luar sistem. Setelah checkout, admin akan mengirimkan informasi rekening dan instruksi pembayaran melalui WhatsApp atau email.
+                                    </div>
+
                                     <button type="submit" class="btn btn-primary w-100 mb-2">
                                         <i class="bi bi-cart-check"></i> Checkout Sekarang
                                     </button>
@@ -184,4 +226,37 @@
             </div>
         </div>
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const shippingMethod = document.getElementById('shippingMethod');
+            const shippingAddressGroup = document.getElementById('shippingAddressGroup');
+            const shippingCostInfo = document.getElementById('shippingCostInfo');
+            const shippingCostRow = document.getElementById('shippingCostRow');
+            const shippingCostDisplay = document.getElementById('shippingCostDisplay');
+            const totalWithShipping = document.getElementById('totalWithShipping');
+            const subtotal = {{ $total }};
+
+            function updateShippingDisplay() {
+                if (shippingMethod.value === 'pickup') {
+                    shippingAddressGroup.style.display = 'none';
+                    shippingAddressGroup.querySelector('textarea').removeAttribute('required');
+                    shippingCostInfo.style.display = 'none';
+                    shippingCostRow.style.display = 'none';
+                } else {
+                    shippingAddressGroup.style.display = 'block';
+                    shippingAddressGroup.querySelector('textarea').setAttribute('required', 'required');
+                    shippingCostInfo.style.display = 'block';
+                    shippingCostRow.style.display = 'none'; // Sembunyikan karena ongkos kirim belum diketahui
+                }
+                // Total hanya subtotal, ongkos kirim akan ditambahkan admin nanti
+                totalWithShipping.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(subtotal);
+            }
+
+            shippingMethod.addEventListener('change', updateShippingDisplay);
+            
+            // Initialize
+            updateShippingDisplay();
+        });
+    </script>
 @endsection

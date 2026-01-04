@@ -36,6 +36,8 @@ Route::prefix('admin')
         Route::resource('products', ProductAdminController::class)->except(['show']);
         Route::resource('categories', CategoryAdminController::class)->except(['show']);
         Route::resource('orders', OrderAdminController::class);
+        Route::post('orders/{order}/update-status', [OrderAdminController::class, 'updateStatus'])->name('orders.update-status');
+        Route::post('orders/{order}/update-shipping-cost', [OrderAdminController::class, 'updateShippingCost'])->name('orders.update-shipping-cost');
     });
 
 // =====================

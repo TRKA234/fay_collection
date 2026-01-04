@@ -44,6 +44,10 @@
                 class="btn btn-sm {{ request('status') == 'paid' ? 'btn-info' : 'btn-outline-info' }}">
                 Sudah Dibayar
             </a>
+            <a href="{{ route('admin.orders.index', ['status' => 'shipped']) }}"
+                class="btn btn-sm {{ request('status') == 'shipped' ? 'btn-primary' : 'btn-outline-primary' }}">
+                Dikirim
+            </a>
             <a href="{{ route('admin.orders.index', ['status' => 'completed']) }}"
                 class="btn btn-sm {{ request('status') == 'completed' ? 'btn-success' : 'btn-outline-success' }}">
                 Selesai
@@ -109,9 +113,55 @@
                                         <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-outline-primary">
                                             Detail
                                         </a>
-                                        <a href="{{ route('admin.orders.edit', $order) }}" class="btn btn-sm btn-outline-secondary">
-                                            Edit
-                                        </a>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" 
+                                                id="statusDropdown{{ $order->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Ubah Status
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="statusDropdown{{ $order->id }}">
+                                                <li>
+                                                    <a class="dropdown-item status-change" href="#" 
+                                                        data-order-id="{{ $order->id }}" 
+                                                        data-status="pending"
+                                                        data-status-label="Menunggu">
+                                                        <span class="badge bg-warning text-dark me-2">Menunggu</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item status-change" href="#" 
+                                                        data-order-id="{{ $order->id }}" 
+                                                        data-status="paid"
+                                                        data-status-label="Sudah Dibayar">
+                                                        <span class="badge bg-info text-dark me-2">Sudah Dibayar</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item status-change" href="#" 
+                                                        data-order-id="{{ $order->id }}" 
+                                                        data-status="shipped"
+                                                        data-status-label="Dikirim">
+                                                        <span class="badge bg-primary me-2">Dikirim</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item status-change" href="#" 
+                                                        data-order-id="{{ $order->id }}" 
+                                                        data-status="completed"
+                                                        data-status-label="Selesai">
+                                                        <span class="badge bg-success me-2">Selesai</span>
+                                                    </a>
+                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <a class="dropdown-item status-change text-danger" href="#" 
+                                                        data-order-id="{{ $order->id }}" 
+                                                        data-status="cancelled"
+                                                        data-status-label="Dibatalkan">
+                                                        <span class="badge bg-danger me-2">Dibatalkan</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -127,4 +177,64 @@
             @endif
         @endif
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.status-change').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const orderId = this.dataset.orderId;
+                    const status = this.dataset.status;
+                    const statusLabel = this.dataset.statusLabel;
+                    
+                    if (!confirm('Yakin ingin mengubah status pesanan menjadi "' + statusLabel + '"?')) {
+                        return;
+                    }
+                    
+                    // Show loading
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengubah...';
+                    this.style.pointerEvents = 'none';
+                    
+                    // Send request
+                    const updateUrl = '/admin/orders/' + orderId + '/update-status';
+                    fetch(updateUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ status: status })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw new Error(err.message || 'Gagal mengubah status');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Reload page to show updated status
+                            location.reload();
+                        } else {
+                            alert('Gagal mengubah status pesanan: ' + (data.message || 'Unknown error'));
+                            this.innerHTML = originalText;
+                            this.style.pointerEvents = 'auto';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Terjadi kesalahan saat mengubah status pesanan: ' + error.message);
+                        this.innerHTML = originalText;
+                        this.style.pointerEvents = 'auto';
+                    });
+                });
+            });
+        });
+    </script>
 @endsection

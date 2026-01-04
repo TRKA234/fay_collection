@@ -43,6 +43,77 @@
                 </div>
             </div>
 
+            {{-- Informasi Pengiriman --}}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="mb-3">Informasi Pengiriman</h5>
+
+                    <div class="mb-3">
+                        <label class="text-muted" style="font-size: 0.85rem;">Metode Pengiriman</label>
+                        <div style="font-size: 1rem; font-weight: 500;">
+                            <span class="badge {{ $order->shipping_method == 'jnt' ? 'bg-primary' : 'bg-success' }}">
+                                {{ $order->getShippingMethodLabel() }}
+                            </span>
+                        </div>
+                    </div>
+
+                    @if($order->shipping_method == 'jnt' && $order->shipping_address)
+                        <div class="mb-3">
+                            <label class="text-muted" style="font-size: 0.85rem;">Alamat Pengiriman</label>
+                            <div style="font-size: 0.95rem; white-space: pre-line;">{{ $order->shipping_address }}</div>
+                        </div>
+                    @elseif($order->shipping_method == 'pickup')
+                        <div class="mb-3">
+                            <label class="text-muted" style="font-size: 0.85rem;">Lokasi Pengambilan</label>
+                            <div style="font-size: 0.95rem;">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                Ambil langsung di lokasi produksi. Admin akan mengirimkan alamat lengkap via WhatsApp.
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="mb-3">
+                        <label class="text-muted" style="font-size: 0.85rem;">Ongkos Kirim</label>
+                        @if($order->shipping_cost > 0)
+                            <div style="font-size: 1rem; font-weight: 500;">
+                                Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}
+                            </div>
+                        @else
+                            <div style="font-size: 0.95rem; color: #666;">
+                                <i class="bi bi-clock me-1"></i>
+                                Menunggu konfirmasi admin. Admin akan menghubungi Anda via WhatsApp untuk konfirmasi ongkos kirim.
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            {{-- Informasi Pembayaran --}}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="mb-3">Informasi Pembayaran</h5>
+
+                    <div class="mb-3">
+                        <label class="text-muted" style="font-size: 0.85rem;">Metode Pembayaran</label>
+                        <div style="font-size: 1rem; font-weight: 500;">{{ ucfirst($order->payment_method ?? 'Transfer') }}</div>
+                    </div>
+
+                    @if($order->payment_info)
+                        <div class="mb-3">
+                            <label class="text-muted" style="font-size: 0.85rem;">Informasi Rekening/Instruksi Pembayaran</label>
+                            <div style="font-size: 0.95rem; white-space: pre-line; background-color: #f8f9fa; padding: 15px; border-radius: 8px;">
+                                {{ $order->payment_info }}
+                            </div>
+                        </div>
+                    @else
+                        <div class="alert alert-info py-2" style="font-size: 0.85rem;">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Admin akan mengirimkan informasi rekening dan instruksi pembayaran melalui WhatsApp atau email setelah pesanan dikonfirmasi.
+                        </div>
+                    @endif
+                </div>
+            </div>
+
             {{-- Daftar Produk --}}
             <div class="card mt-3">
                 <div class="card-body">
@@ -78,9 +149,37 @@
                             </tbody>
                             <tfoot>
                                 <tr>
+                                    <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                                    <td class="text-end">
+                                        <strong>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end">
+                                        <strong>Ongkos Kirim:</strong>
+                                        @if($order->shipping_cost == 0)
+                                            <small class="text-muted d-block" style="font-size: 0.7rem;">Menunggu konfirmasi</small>
+                                        @endif
+                                    </td>
+                                    <td class="text-end">
+                                        @if($order->shipping_cost > 0)
+                                            <strong>Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</strong>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th colspan="3" class="text-end">Total Pesanan:</th>
                                     <th class="text-end price-text" style="font-size: 1.1rem;">
-                                        Rp {{ number_format($order->total_amount, 0, ',', '.') }}
+                                        @if($order->shipping_cost > 0)
+                                            Rp {{ number_format($order->getTotalWithShipping(), 0, ',', '.') }}
+                                        @else
+                                            <span style="font-size: 0.9rem; color: #666;">
+                                                Rp {{ number_format($order->total_amount, 0, ',', '.') }}
+                                                <small class="d-block" style="font-size: 0.7rem;">+ ongkos kirim</small>
+                                            </span>
+                                        @endif
                                     </th>
                                 </tr>
                             </tfoot>

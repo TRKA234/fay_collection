@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AdminOrderNotificationMail;
+use App\Mail\OrderCreatedMail;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
 {
@@ -170,6 +174,8 @@ class CartController extends Controller
         // Validasi form
         $validated = $request->validate([
             'customer_contact' => ['required', 'string', 'max:255'],
+            'shipping_method' => ['required', 'in:jnt,pickup'],
+            'shipping_address' => ['required_if:shipping_method,jnt', 'nullable', 'string'],
             'notes' => ['nullable', 'string'],
         ]);
 
@@ -209,6 +215,7 @@ class CartController extends Controller
         }
 
         // Simpan order ke database
+        // Ongkos kirim akan ditentukan oleh admin setelah pesanan dibuat
         try {
             DB::beginTransaction();
 
@@ -216,7 +223,11 @@ class CartController extends Controller
                 'user_id' => Auth::id(),
                 'customer_name' => Auth::user()->name,
                 'customer_contact' => $validated['customer_contact'],
-                'total_amount' => $totalAmount,
+                'shipping_address' => $validated['shipping_address'] ?? null,
+                'shipping_method' => $validated['shipping_method'],
+                'shipping_cost' => 0, // Akan diisi admin setelah konfirmasi
+                'payment_method' => 'transfer', // Default payment method
+                'total_amount' => $totalAmount, // Subtotal tanpa ongkos kirim
                 'status' => 'pending',
                 'notes' => $validated['notes'] ?? null,
             ]);
@@ -231,6 +242,27 @@ class CartController extends Controller
             }
 
             DB::commit();
+
+            // Load order dengan products untuk email
+            $order->load('products');
+
+            // Kirim email ke customer
+            try {
+                if ($order->user && $order->user->email) {
+                    Mail::to($order->user->email)->send(new OrderCreatedMail($order));
+                }
+            } catch (\Exception $e) {
+                // Log error but don't fail the order creation
+                Log::error('Failed to send order created email: ' . $e->getMessage());
+            }
+
+            // Kirim email ke admin
+            try {
+                Mail::to(config('mail.from.address'))->send(new AdminOrderNotificationMail($order, 'new_order'));
+            } catch (\Exception $e) {
+                // Log error but don't fail the order creation
+                Log::error('Failed to send admin notification email: ' . $e->getMessage());
+            }
 
             // Kosongkan cart
             session()->forget('cart');

@@ -13,6 +13,11 @@ class Order extends Model
         'user_id',
         'customer_name',
         'customer_contact',
+        'shipping_address',
+        'shipping_method',
+        'shipping_cost',
+        'payment_method',
+        'payment_info',
         'total_amount',
         'status',
         'notes',
@@ -20,6 +25,7 @@ class Order extends Model
 
     protected $casts = [
         'total_amount' => 'integer',
+        'shipping_cost' => 'integer',
     ];
 
     /**
@@ -68,5 +74,25 @@ class Order extends Model
             'cancelled' => 'Dibatalkan',
             default => $this->status,
         };
+    }
+
+    /**
+     * Get shipping method label
+     */
+    public function getShippingMethodLabel()
+    {
+        return match ($this->shipping_method) {
+            'jnt' => 'JNT Express',
+            'pickup' => 'Ambil di Lokasi',
+            default => $this->shipping_method,
+        };
+    }
+
+    /**
+     * Get total amount including shipping
+     */
+    public function getTotalWithShipping()
+    {
+        return $this->total_amount + $this->shipping_cost;
     }
 }

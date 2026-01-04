@@ -54,6 +54,49 @@
                     </div>
                 </div>
 
+                {{-- Informasi Pengiriman --}}
+                <div class="mb-4">
+                    <h5 class="mb-3">Informasi Pengiriman</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label">Metode Pengiriman <span class="text-danger">*</span></label>
+                        <select name="shipping_method" id="shippingMethod" class="form-select" required>
+                            <option value="jnt" {{ old('shipping_method') == 'jnt' ? 'selected' : '' }}>JNT Express (Pengiriman)</option>
+                            <option value="pickup" {{ old('shipping_method') == 'pickup' ? 'selected' : '' }}>Ambil di Lokasi Produksi</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="shippingAddressGroup">
+                        <label class="form-label">Alamat Pengiriman Lengkap <span class="text-danger">*</span></label>
+                        <textarea name="shipping_address" class="form-control" rows="3"
+                            placeholder="Nama Penerima, Jalan, RT/RW, Kelurahan, Kecamatan, Kota, Kode Pos" required>{{ old('shipping_address') }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ongkos Kirim (Rp) <span class="text-danger">*</span></label>
+                        <input type="number" name="shipping_cost" class="form-control"
+                            value="{{ old('shipping_cost', 0) }}" min="0" required>
+                    </div>
+                </div>
+
+                {{-- Informasi Pembayaran --}}
+                <div class="mb-4">
+                    <h5 class="mb-3">Informasi Pembayaran</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label">Metode Pembayaran</label>
+                        <input type="text" name="payment_method" class="form-control"
+                            value="{{ old('payment_method', 'transfer') }}" placeholder="Contoh: Transfer, Cash, dll">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Informasi Rekening/Instruksi Pembayaran</label>
+                        <textarea name="payment_info" class="form-control" rows="4"
+                            placeholder="Contoh:&#10;Bank: BCA&#10;No. Rekening: 1234567890&#10;Atas Nama: Fay Collection&#10;&#10;Atau instruksi pembayaran lainnya...">{{ old('payment_info') }}</textarea>
+                        <small class="text-muted">Informasi ini akan dikirim ke customer melalui email dan WhatsApp</small>
+                    </div>
+                </div>
+
                 {{-- Produk yang Dipesan --}}
                 <div class="mb-4">
                     <h5 class="mb-3">Produk yang Dipesan</h5>
@@ -66,8 +109,8 @@
                 </div>
 
                 {{-- Catatan --}}
-                <div class="mb-3">
-                    <label class="form-label">Catatan (Opsional)</label>
+                <div class="mb-4">
+                    <h5 class="mb-3">Catatan</h5>
                     <textarea name="notes" class="form-control" rows="3"
                         placeholder="Catatan tambahan tentang pesanan ini...">{{ old('notes') }}</textarea>
                 </div>
@@ -93,6 +136,21 @@
     </div>
 
     <script>
+        // Handle shipping method change
+        document.getElementById('shippingMethod').addEventListener('change', function() {
+            const addressGroup = document.getElementById('shippingAddressGroup');
+            if (this.value === 'pickup') {
+                addressGroup.style.display = 'none';
+                addressGroup.querySelector('textarea').removeAttribute('required');
+            } else {
+                addressGroup.style.display = 'block';
+                addressGroup.querySelector('textarea').setAttribute('required', 'required');
+            }
+        });
+        
+        // Initialize
+        document.getElementById('shippingMethod').dispatchEvent(new Event('change'));
+
         let productIndex = 0;
         const products = @json($products);
 
