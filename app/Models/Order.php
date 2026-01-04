@@ -37,6 +37,14 @@ class Order extends Model
     }
 
     /**
+     * Scope a query to only include orders for a specific user.
+     */
+    public function scopeForUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
+    /**
      * Get the products for the order.
      */
     public function products()

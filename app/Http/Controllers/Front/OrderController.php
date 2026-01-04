@@ -14,7 +14,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::where('user_id', Auth::id())
+        $orders = Order::forUser(Auth::id())
             ->with('products')
             ->latest()
             ->paginate(10);
@@ -28,7 +28,8 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         // Pastikan order milik user yang login
-        if ($order->user_id !== Auth::id()) {
+        // Handle null user_id (order dibuat admin) dan type mismatch dengan casting ke integer
+        if (!$order->user_id || (int) $order->user_id !== (int) Auth::id()) {
             abort(403, 'Unauthorized access.');
         }
 
