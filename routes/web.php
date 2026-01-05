@@ -24,6 +24,15 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // =====================
+// EMAIL VERIFICATION (AUTH REQUIRED)
+// =====================
+Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', [AuthController::class, 'showVerificationNotice'])->name('verification.notice');
+    Route::post('/email/verify', [AuthController::class, 'verifyEmail'])->name('verification.verify');
+    Route::post('/email/resend', [AuthController::class, 'resendVerificationCode'])->name('verification.resend');
+});
+
+// =====================
 // ADMIN AREA (ADMIN ONLY)
 // =====================
 Route::prefix('admin')
